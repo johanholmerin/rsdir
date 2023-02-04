@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Used for testing the default editor in case the EDITOR environment variables
+# isn't set. See the `default_editor` test
+
+echo "fake vi"

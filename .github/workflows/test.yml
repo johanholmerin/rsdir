@@ -1,0 +1,68 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    name: test
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        include:
+          - build: pinned
+            os: ubuntu-22.04
+            rust: 1.66.1
+          - build: stable
+            os: ubuntu-22.04
+            rust: stable
+          - build: beta
+            os: ubuntu-22.04
+            rust: beta
+          - build: macos
+            os: macos-12
+            rust: stable
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          components: 'clippy, rustfmt'
+
+      - name: Formatting
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --all-features -- -D warnings
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Test
+        run: cargo test
+
+      - name: Docs
+        run: cargo doc
+
+      - name: Install cargo-tarpaulin
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-tarpaulin@0.25.0
+
+      - name: cargo-tarpaulin
+        run: cargo tarpaulin --out html --output-dir target/tarpaulin
+
+      - name: Upload coverage
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3
+        with:
+          name: tarpaulin-report-${{ matrix.build }}
+          path: target/tarpaulin/tarpaulin-report.html

@@ -1,0 +1,23 @@
+[package]
+name = "rsdir"
+version = "0.1.0"
+edition = "2021"
+authors = ["Johan Holmerin <johan@holmer.in>"]
+description = """
+Edit directories as a text file. Reimplementation of vidir from moreutils
+"""
+documentation = "https://github.com/johanholmerin/rsdir"
+homepage = "https://github.com/johanholmerin/rsdir"
+repository = "https://github.com/johanholmerin/rsdir"
+keywords = ["cli", "vidir"]
+categories = ["command-line-utilities"]
+license = "MIT"
+
+[dependencies]
+anyhow = { version = "1.0.68", features = ["backtrace"] }
+clap = { version = "4.1.4", features = ["derive"] }
+os_str_bytes = "6.4.1"
+tempfile = "3.3.0"
+
+[dev-dependencies]
+walkdir = "2.3.2"
